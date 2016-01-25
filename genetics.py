@@ -82,6 +82,11 @@ orig = Image.open("ORIGINAL.png")
 orig = orig.convert("RGB")
 orig_pix = orig.load()
 def check_fitness(organism):
+	if 'fitness' in organism:
+		# Fitness already calculated; don't bother doing it again
+		# IMPORTANT: This depends on mutations returning a copy!
+		return organism['fitness']
+
 	image = get_image(organism)
 
 	img  = Image.open(StringIO.StringIO(image))
@@ -106,7 +111,9 @@ def check_fitness(organism):
 			score += (img_g-orig_g)**2
 			score += (img_b-orig_b)**2
 
-	return (score/255.**2)
+	fitness=score/255.**2
+	organism['fitness'] = fitness
+	return fitness
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
