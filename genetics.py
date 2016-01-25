@@ -137,11 +137,12 @@ def random_square(UNUSED_ARG):
 		'ye': random.randint(0, 160),
 	})
 
-def mutate_squares(squares):
+def mutate_squares(old_squares):
+	new_squares = list(old_squares) # Copy array, to avoid mutating it
 	if random.randint(0, 100) == 0:
-		squares.append(random_square())
+		new_squares.append(random_square())
 	if random.randint(0, 100) == 0:
-		squares = random.sample(squares, len(squares)-1)
+		new_squares = random.sample(new_squares, len(old_squares)-1)
 	# TODO change some squares
 
 def mutate(orig):
