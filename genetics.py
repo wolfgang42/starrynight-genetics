@@ -68,9 +68,10 @@ def get_image(organism):
 		chr(organism['bg']) + chr(organism['bg']) + chr(organism['bg']) +
 		chr(0) + chr(193) + chr(0) + chr(160) +
 		''.join([
+			''.join([chr(s['colour'][c]) for c in ['r', 'g', 'b']])+
 			''.join([
 				chr(s[x])
-				for x in ['r', 'g', 'b', 'xs', 'xe', 'ys', 'ye']
+				for x in ['xs', 'xe', 'ys', 'ye']
 			])
 			for s in organism['squares']
 		])
@@ -110,12 +111,19 @@ def check_fitness(organism):
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
-def clamp_colour(n):
-	return clamp(n, 0, 255)
+def clamp_colour(c):
+	for colour in ['r','g','b']:
+		c[colour] = clamp(c[colour], 0, 255)
+
+def random_colour():
+	return {
+		'r': random.randint(0, 255),
+		'g': random.randint(0, 255),
+		'b': random.randint(0, 255),
+	}
 
 def clamp_square(s):
-	for colour in ['r','g','b']:
-		s[colour] = clamp_colour(s[colour])
+	clamp_colour(s['colour'])
 	s['xs'] = clamp(s['xs'], 0, 193)
 	s['xe'] = clamp(s['xe'], 0, 193)
 	s['ys'] = clamp(s['ys'], 0, 160)
@@ -128,9 +136,7 @@ def clamp_square(s):
 
 def random_square(UNUSED_ARG):
 	return clamp_square({
-		'r': random.randint(0, 255),
-		'g': random.randint(0, 255),
-		'b': random.randint(0, 255),
+		'colour': random_colour(),
 		'xs': random.randint(0, 193),
 		'xe': random.randint(0, 193),
 		'ys': random.randint(0, 160),
@@ -146,7 +152,7 @@ def mutate_squares(old_squares):
 	# TODO change some squares
 
 def mutate(orig):
-	new = {'squares': orig['squares'], 'bg': clamp_colour(orig['bg']+random.randint(-10, 10))}
+	new = {'squares': orig['squares'], 'bg': clamp(orig['bg']+random.randint(-10, 10), 0, 255)}
 	return new
 
 def sort_by_fitness(generation):
@@ -168,10 +174,37 @@ def new_generation(old_gen):
 	return new_gen[0:len(old_gen)]
 
 current_gen = (
-	+[{'squares': [{'b': 92, 'g': 40, 'ye': 100, 'xe': 100, 'r': 223, 'xs': 51, 'ys': 42}, {'b': 41, 'g': 232, 'ye': 47, 'xe': 168, 'r': 187, 'xs': 127, 'ys': 22}, {'b': 119, 'g': 223, 'ye': 92, 'xe': 32, 'r': 45, 'xs': 29, 'ys': 71}], 'bg': 94}]
-	+[{'squares': [{'b': 229, 'g': 7, 'ye': 115, 'xe': 32, 'r': 106, 'xs': 6, 'ys': 52}], 'bg': 99}]
-	+[{'squares': [{'b': 152, 'g': 122, 'ye': 16, 'xe': 111, 'r': 111, 'xs': 26, 'ys': 13}], 'bg': 92}]
 	[random_organism() for g in range(9)]
+	+[
+		{
+			'name': 'AA',
+			'bg': 94,
+			'squares': [
+				{'colour': {'r': 223, 'b': 92, 'g': 40}, 'ye': 100, 'xe': 100, 'xs': 51, 'ys': 42},
+				{'colour': {'r': 187, 'b': 41, 'g': 232}, 'ye': 47, 'xe': 168, 'xs': 127, 'ys': 22},
+				{'colour': {'r': 45, 'b': 119, 'g': 223}, 'ye': 92, 'xe': 32, 'xs': 29, 'ys': 71}
+			]
+		},
+		{
+			'name': 'BB',
+			'bg': 99,
+			'squares': [
+				{'colour': {'r': 106, 'b': 229, 'g': 7}, 'ye': 115, 'xe': 32, 'xs': 6, 'ys': 52}
+			]
+		},
+		{
+			'name': 'CC',
+			'bg': 92,
+			'squares': [
+				{'colour': {'r': 111, 'b': 152, 'g': 122}, 'ye': 16, 'xe': 111, 'xs': 26, 'ys': 13}
+			]
+		},
+		{
+			'name': 'DD',
+			'bg': 92,
+			'squares': []
+		}
+	]
 )
 for i in range(20):
 	current_gen = new_generation(current_gen)
