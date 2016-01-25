@@ -81,9 +81,14 @@ def mate_shape(parent1, parent2):
 
 def mate_organism(parent1, parent2):
 	# TODO mutations
+	shapes = [mate_shape(parent1[1][x], parent2[1][x]) for x in range(110)]
+	for i in range(randint(0, 10)):
+		n1 = randint(0, 109)
+		n2 = randint(0, 109)
+		shapes[n1], shapes[n2] = shapes[n2], shapes[n1]
 	return (
 		mate_colours(parent1[0], parent2[0]),
-		tuple([mate_shape(parent1[1][x], parent2[1][x]) for x in range(110)])
+		tuple(shapes)
 	)
 
 def new_generation(old_gen):
