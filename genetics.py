@@ -65,7 +65,7 @@ def check_output_input(*popenargs, **kwargs):
 def get_image(organism):
 	command = (
 		chr(len(organism['squares'])+1) +
-		chr(organism['bg']) + chr(organism['bg']) + chr(organism['bg']) +
+		''.join([chr(organism['bg'][c]) for c in ['r', 'g', 'b']]) +
 		chr(0) + chr(193) + chr(0) + chr(160) +
 		''.join([
 			''.join([chr(s['colour'][c]) for c in ['r', 'g', 'b']])+
@@ -122,6 +122,13 @@ def random_colour():
 		'b': random.randint(0, 255),
 	}
 
+def mutate_colour(old_colour):
+	return {
+		'r': clamp(old_colour['r']+random.randint(-10, 10), 0, 255),
+		'g': clamp(old_colour['g']+random.randint(-10, 10), 0, 255),
+		'b': clamp(old_colour['b']+random.randint(-10, 10), 0, 255),
+	}
+
 def clamp_square(s):
 	clamp_colour(s['colour'])
 	s['xs'] = clamp(s['xs'], 0, 193)
@@ -152,7 +159,7 @@ def mutate_squares(old_squares):
 	# TODO change some squares
 
 def mutate(orig):
-	new = {'squares': orig['squares'], 'bg': clamp(orig['bg']+random.randint(-10, 10), 0, 255)}
+	new = {'squares': orig['squares'], 'bg': mutate_colour(orig['bg'])}
 	return new
 
 def sort_by_fitness(generation):
@@ -160,7 +167,7 @@ def sort_by_fitness(generation):
 
 def random_organism():
 	return {
-		'bg':random.randint(0, 255),
+		'bg': random_colour(),
 		'squares':map(random_square, [0]*random.randint(0, 4))
 	}
 
@@ -178,7 +185,7 @@ current_gen = (
 	+[
 		{
 			'name': 'AA',
-			'bg': 94,
+			'bg': {'r': 94, 'g': 94, 'b': 94},
 			'squares': [
 				{'colour': {'r': 223, 'b': 92, 'g': 40}, 'ye': 100, 'xe': 100, 'xs': 51, 'ys': 42},
 				{'colour': {'r': 187, 'b': 41, 'g': 232}, 'ye': 47, 'xe': 168, 'xs': 127, 'ys': 22},
@@ -187,23 +194,28 @@ current_gen = (
 		},
 		{
 			'name': 'BB',
-			'bg': 99,
+			'bg': {'r': 99, 'g': 99, 'b': 99},
 			'squares': [
 				{'colour': {'r': 106, 'b': 229, 'g': 7}, 'ye': 115, 'xe': 32, 'xs': 6, 'ys': 52}
 			]
 		},
 		{
 			'name': 'CC',
-			'bg': 92,
+			'bg': {'r': 92, 'g': 92, 'b': 92},
 			'squares': [
 				{'colour': {'r': 111, 'b': 152, 'g': 122}, 'ye': 16, 'xe': 111, 'xs': 26, 'ys': 13}
 			]
 		},
 		{
 			'name': 'DD',
-			'bg': 92,
+			'bg': {'r': 92, 'g': 92, 'b': 92},
 			'squares': []
-		}
+		},
+		{
+			'name': 'EE',
+			'bg': {'r': 78, 'b': 107, 'g': 93},
+			'squares': []
+		},
 	]
 )
 for i in range(20):
