@@ -64,8 +64,9 @@ def check_output_input(*popenargs, **kwargs):
 
 def get_image(organism):
 	command = (
-		chr(organism['bg']) +
-		chr(len(organism['squares'])) +
+		chr(len(organism['squares'])+1) +
+		chr(organism['bg']) + chr(organism['bg']) + chr(organism['bg']) +
+		chr(0) + chr(193) + chr(0) + chr(160) +
 		''.join([
 			''.join([
 				chr(s[x])

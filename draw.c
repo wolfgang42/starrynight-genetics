@@ -1,12 +1,10 @@
 #include <stdio.h>
-#include <string.h>
 #define NEXT getchar()
 #define NEXTPOS NEXT*2
 //      y    x   c
 char m[320][386][3];
 int main(){
 	puts("P6 386 320 255");
-	memset(m,NEXT,sizeof(m));
 	int c=NEXT;
 	while(c--) {
 		char r = NEXT;
