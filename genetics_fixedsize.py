@@ -53,10 +53,10 @@ def mate_int(parent1, parent2, maximum):
 	movement = 0
 	if randint(0, 50) == 0:
 		movement = randint(-50, 50)
-	return int(clamp(
-		parent1*r + parent2*(1-r) + movement,
-		0, maximum
-	))
+	if r < .5:
+		return clamp(parent1 + movement, 0, maximum)
+	else:
+		return clamp(parent2 + movement, 0, maximum)
 
 def mate_colours(parent1, parent2):
 	# TODO mutations
@@ -90,7 +90,7 @@ def mate_shape(parent1, parent2):
 def mate_organism(parent1, parent2):
 	# TODO mutations
 	shapes = [mate_shape(parent1[1][x], parent2[1][x]) for x in range(110)]
-	for i in range(randint(0, 10)):
+	for i in range(randint(0, 30)):
 		n1 = randint(0, 109)
 		n2 = randint(0, 109)
 		shapes[n1], shapes[n2] = shapes[n2], shapes[n1]
@@ -103,12 +103,14 @@ def new_generation(old_gen):
 	new_gen = list(old_gen)
 	for i in range(len(old_gen)):
 		new_gen.append(mate_organism(choice(old_gen), choice(old_gen)))
+	new_gen.append(mate_organism(choice(old_gen), random_organism())) # Mix in some fresh blood
 	new_gen.sort(key=lambda o: genetics_lib.check_fitness(command_organism(o)))
 	return tuple(new_gen[0:len(old_gen)])
 
-current_gen = tuple([random_organism() for x in range(20)])
-for i in range(20):
+current_gen = tuple([random_organism() for x in range(22)])
+for i in range(30):
 	current_gen = new_generation(current_gen)
 	#pprint(current_gen)
-	with open('result-'+str(i)+'.ppm', 'w') as f:
-		f.write(genetics_lib.get_image(command_organism(current_gen[0])))
+	for j in range(11):
+		with open('Aresult-'+str(i)+'-'+str(j)+'.ppm', 'w') as f:
+			f.write(genetics_lib.get_image(command_organism(current_gen[j])))
