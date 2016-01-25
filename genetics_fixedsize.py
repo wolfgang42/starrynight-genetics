@@ -27,17 +27,25 @@ def random_organism():
 	return (random_colour(), tuple([random_shape() for x in range(110)]))
 
 
-def command_base(c):
-	return ''.join([chr(x) for x in c])
+def command_colour(c):
+	if len(c) != 3: raise ValueError("Invalid colour passed")
+	return chr(c[0])+chr(c[1])+chr(c[2])
+def command_range(r):
+	if len(r) != 2: raise ValueError("Invalid range passed")
+	return chr(r[0])+chr(r[1])
 def command_coords(c):
-	return command_base(c[0]) + command_base(c[1])
+	if c[0][1] > 193: raise ValueError("X coordinate too large")
+	if c[1][1] > 160: raise ValueError("Y coordinate too large: "+str(r[1]))
+	return command_range(c[0]) + command_range(c[1])
 def command_shape(s):
-	return command_coords(s[0]) + command_base(s[1])
+	ret = command_colour(s[1]) + command_coords(s[0])
+	if len(ret) != 7: raise ValueError("Unexpected shape arrangement")
+	return ret
 def command_organism(organism):
 	return (
-		chr(110) + # All organisms have exactly 110 shapes
-		command_base(organism[0]) +
-		''.join([command_shape(s) for s in organism[1]])
+		chr(111) + # All organisms have exactly 110 shapes, plus the background
+		command_shape((((0, 193), (0, 160)), organism[0])) +
+		''.join([command_shape(organism[1][s]) for s in range(110)])
 	)
 
 def mate_int(parent1, parent2, maximum):
