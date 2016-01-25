@@ -1,4 +1,5 @@
 from random import randint
+from pprint import pprint
 import genetics_lib
 
 def clamp(n, minn, maxn):
@@ -39,6 +40,13 @@ def command_organism(organism):
 		''.join([command_shape(s) for s in organism[1]])
 	)
 
-for i in range(10):
-	with open('fixed'+str(i)+'.ppm', 'w') as f:
-		f.write(genetics_lib.get_image(command_organism(random_organism())))
+def new_generation(old_gen):
+	new_gen = list(old_gen)
+	new_gen.sort(key=lambda o: genetics_lib.check_fitness(command_organism(o)))
+	return tuple(new_gen)
+
+current_gen = tuple([random_organism() for x in range(20)])
+current_gen = new_generation(current_gen)
+pprint(current_gen)
+with open('result.ppm', 'w') as f:
+	f.write(genetics_lib.get_image(command_organism(current_gen[0])))
