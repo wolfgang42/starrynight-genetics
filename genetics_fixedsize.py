@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, choice
 from pprint import pprint
 import genetics_lib
 
@@ -40,13 +40,52 @@ def command_organism(organism):
 		''.join([command_shape(s) for s in organism[1]])
 	)
 
+def mate_colours(parent1, parent2):
+	# TODO mutations
+	return (
+		(parent1[0]+parent2[0])/2,
+		(parent1[1]+parent2[1])/2,
+		(parent1[2]+parent2[2])/2,
+	)
+
+def mate_range(parent1, parent2, maximum):
+	# TODO mutations
+	return ordered_pair((
+		clamp((parent1[0]+parent2[0])/2, 0, maximum), 
+		clamp((parent1[1]+parent2[1])/2, 0, maximum),
+	))
+
+def mate_coords(parent1, parent2):
+	# TODO mutations
+	return (
+		mate_range(parent1[0], parent2[0], 193),
+		mate_range(parent1[1], parent2[1], 160),
+	)
+
+def mate_shape(parent1, parent2):
+	# TODO mutations
+	return (
+		mate_coords(parent1[0], parent2[0]),
+		mate_colours(parent1[1], parent2[1])
+	)
+
+def mate_organism(parent1, parent2):
+	# TODO mutations
+	return (
+		mate_colours(parent1[0], parent2[0]),
+		tuple([mate_shape(parent1[1][x], parent2[1][x]) for x in range(110)])
+	)
+
 def new_generation(old_gen):
 	new_gen = list(old_gen)
+	for i in range(len(old_gen)):
+		new_gen.append(mate_organism(choice(old_gen), choice(old_gen)))
 	new_gen.sort(key=lambda o: genetics_lib.check_fitness(command_organism(o)))
-	return tuple(new_gen)
+	return tuple(new_gen[0:len(old_gen)])
 
 current_gen = tuple([random_organism() for x in range(20)])
-current_gen = new_generation(current_gen)
-pprint(current_gen)
-with open('result.ppm', 'w') as f:
-	f.write(genetics_lib.get_image(command_organism(current_gen[0])))
+for i in range(20):
+	current_gen = new_generation(current_gen)
+	#pprint(current_gen)
+	with open('result-'+str(i)+'.ppm', 'w') as f:
+		f.write(genetics_lib.get_image(command_organism(current_gen[0])))
