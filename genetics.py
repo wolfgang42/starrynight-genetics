@@ -151,20 +151,26 @@ def mutate(orig):
 def sort_by_fitness(generation):
 	generation.sort(key=check_fitness)
 
+def random_organism():
+	return {
+		'bg':random.randint(0, 255),
+		'squares':map(random_square, [0]*random.randint(0, 4))
+	}
+
 def new_generation(old_gen):
-	new_gen = old_gen + map(mutate, random.sample(old_gen, len(old_gen)/2))
+	new_gen = (
+		old_gen # Keep the old generation to compare against
+		+ map(mutate, random.sample(old_gen, len(old_gen)/2)) # Make some mutations
+		+ [random_organism()] # Also generate a completely random one
+	)
 	sort_by_fitness(new_gen)
 	return new_gen[0:len(old_gen)]
 
 current_gen = (
-	[
-		{
-			'bg':random.randint(0, 255),
-			'squares':map(random_square, [0]*random.randint(0, 4))
-	} for g in range(9)]
 	+[{'squares': [{'b': 92, 'g': 40, 'ye': 100, 'xe': 100, 'r': 223, 'xs': 51, 'ys': 42}, {'b': 41, 'g': 232, 'ye': 47, 'xe': 168, 'r': 187, 'xs': 127, 'ys': 22}, {'b': 119, 'g': 223, 'ye': 92, 'xe': 32, 'r': 45, 'xs': 29, 'ys': 71}], 'bg': 94}]
 	+[{'squares': [{'b': 229, 'g': 7, 'ye': 115, 'xe': 32, 'r': 106, 'xs': 6, 'ys': 52}], 'bg': 99}]
 	+[{'squares': [{'b': 152, 'g': 122, 'ye': 16, 'xe': 111, 'r': 111, 'xs': 26, 'ys': 13}], 'bg': 92}]
+	[random_organism() for g in range(9)]
 )
 for i in range(20):
 	current_gen = new_generation(current_gen)
