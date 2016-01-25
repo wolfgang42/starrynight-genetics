@@ -1,4 +1,4 @@
-from random import randint, choice
+from random import randint, choice, random
 from pprint import pprint
 import genetics_lib
 
@@ -40,19 +40,29 @@ def command_organism(organism):
 		''.join([command_shape(s) for s in organism[1]])
 	)
 
+def mate_int(parent1, parent2, maximum):
+	r = random()
+	movement = 0
+	if randint(0, 50) == 0:
+		movement = randint(-50, 50)
+	return int(clamp(
+		parent1*r + parent2*(1-r) + movement,
+		0, maximum
+	))
+
 def mate_colours(parent1, parent2):
 	# TODO mutations
 	return (
-		(parent1[0]+parent2[0])/2,
-		(parent1[1]+parent2[1])/2,
-		(parent1[2]+parent2[2])/2,
+		mate_int(parent1[0], parent2[0], 255),
+		mate_int(parent1[1], parent2[1], 255),
+		mate_int(parent1[2], parent2[2], 255),
 	)
 
 def mate_range(parent1, parent2, maximum):
 	# TODO mutations
 	return ordered_pair((
-		clamp((parent1[0]+parent2[0])/2, 0, maximum), 
-		clamp((parent1[1]+parent2[1])/2, 0, maximum),
+		mate_int(parent1[0], parent2[0], maximum),
+		mate_int(parent1[1], parent2[1], maximum),
 	))
 
 def mate_coords(parent1, parent2):
