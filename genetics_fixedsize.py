@@ -3,7 +3,7 @@ from pprint import pprint
 import genetics_lib
 import pickle
 
-NUM_SHAPES = 110
+NUM_SHAPES = 20
 
 from PIL import Image
 orig = Image.open("ORIGINAL.png")
