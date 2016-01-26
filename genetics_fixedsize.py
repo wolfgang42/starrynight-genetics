@@ -5,6 +5,17 @@ import pickle
 
 NUM_SHAPES = 110
 
+from PIL import Image
+orig = Image.open("ORIGINAL.png")
+orig = orig.convert("RGB")
+orig_pix = orig.load()
+w, h = orig.size
+colours = set()
+for x in range(w):
+	for y in range(h):
+		colours.add(orig_pix[x,y])
+colours = tuple(colours) # So we can choice() it
+
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
@@ -15,7 +26,7 @@ def ordered_pair(p):
 		return (p[0], p[1])
 
 def random_colour():
-	return (randint(0,255), randint(0,255), randint(0,255))
+	return choice(colours)
 
 def random_range(maximum):
 	return ordered_pair((randint(0, maximum), randint(0, maximum)))
