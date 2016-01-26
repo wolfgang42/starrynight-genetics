@@ -1,6 +1,7 @@
 from random import randint, choice, random
 from pprint import pprint
 import genetics_lib
+import pickle
 
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
@@ -111,6 +112,8 @@ current_gen = tuple([random_organism() for x in range(22)])
 for i in range(30):
 	current_gen = new_generation(current_gen)
 	#pprint(current_gen)
+	with open("results-"+str(i)+".pickle", 'w') as f:
+		pickle.dump(current_gen, f)
 	for j in range(11):
 		with open('Aresult-'+str(i)+'-'+str(j)+'.ppm', 'w') as f:
 			f.write(genetics_lib.get_image(command_organism(current_gen[j])))
