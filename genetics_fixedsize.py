@@ -3,6 +3,8 @@ from pprint import pprint
 import genetics_lib
 import pickle
 
+NUM_SHAPES = 110
+
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
@@ -25,7 +27,7 @@ def random_shape():
 	return (random_coords(), random_colour())
 
 def random_organism():
-	return (random_colour(), tuple([random_shape() for x in range(110)]))
+	return (random_colour(), tuple([random_shape() for x in range(NUM_SHAPES)]))
 
 
 def command_colour(c):
@@ -44,9 +46,9 @@ def command_shape(s):
 	return ret
 def command_organism(organism):
 	return (
-		chr(111) + # All organisms have exactly 110 shapes, plus the background
+		chr(NUM_SHAPES+1) + # All organisms have exactly NUM_SHAPES shapes, plus the background
 		command_shape((((0, 193), (0, 160)), organism[0])) +
-		''.join([command_shape(organism[1][s]) for s in range(110)])
+		''.join([command_shape(organism[1][s]) for s in range(NUM_SHAPES)])
 	)
 
 def mate_int(parent1, parent2, maximum):
@@ -90,10 +92,10 @@ def mate_shape(parent1, parent2):
 
 def mate_organism(parent1, parent2):
 	# TODO mutations
-	shapes = [mate_shape(parent1[1][x], parent2[1][x]) for x in range(110)]
+	shapes = [mate_shape(parent1[1][x], parent2[1][x]) for x in range(NUM_SHAPES)]
 	for i in range(randint(0, 30)):
-		n1 = randint(0, 109)
-		n2 = randint(0, 109)
+		n1 = randint(0, NUM_SHAPES-1)
+		n2 = randint(0, NUM_SHAPES-1)
 		shapes[n1], shapes[n2] = shapes[n2], shapes[n1]
 	return (
 		mate_colours(parent1[0], parent2[0]),
